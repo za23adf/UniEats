@@ -112,31 +112,36 @@ main {
   border-radius: 15px;
 }
 
-/* MODALS */
+/* MODAL BACKDROP */
 .modal {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.75);
+  overflow-y: auto; /* ✅ ALLOW SCROLL */
+  padding: 40px 20px;
   animation: fadeIn 0.3s ease;
 }
 
+/* MODAL CONTENT */
 .modalContent {
   background: #fff;
   color: #333;
   max-width: 700px;
-  margin: 60px auto;
+  margin: auto;
   padding: 30px;
   border-radius: 20px;
   animation: popUp 0.4s ease;
-  max-height: 85vh;
-  overflow: hidden;
+  max-height: 90vh;
+  overflow-y: auto; /* ✅ ALLOW INTERNAL SCROLL */
 }
 
+/* Smaller modal */
 .modalContent.small {
   max-width: 400px;
 }
 
+/* CLOSE BUTTON */
 .closeBtn {
   float: right;
   font-size: 26px;
@@ -145,13 +150,14 @@ main {
   cursor: pointer;
 }
 
-/* SCROLLABLE INSTRUCTIONS */
+/* INGREDIENTS & INSTRUCTIONS SCROLL AREA */
 .scroll-box {
-  max-height: 260px;
+  max-height: 300px;
   overflow-y: auto;
   padding-right: 10px;
 }
 
+/* Custom scrollbar */
 .scroll-box::-webkit-scrollbar {
   width: 6px;
 }

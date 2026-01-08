@@ -19,7 +19,7 @@ const currentUserDisplay = document.getElementById("currentUser");
 
 const API_KEY = "425c47cd7d244430a4fd9f1442c39743";
 
-/* ================= USER SESSION ================= */
+/* ================= USER ================= */
 const currentUser = localStorage.getItem("currentUser");
 if (!currentUser) window.location.href = "login.html";
 currentUserDisplay.textContent = "Logged in as: " + currentUser;
@@ -65,14 +65,14 @@ searchInput.addEventListener("keypress", e => {
   if (e.key === "Enter") fetchRecipes(searchInput.value.trim());
 });
 
-/* ================= FETCH RECIPES ================= */
+/* ================= FETCH LIST ================= */
 async function fetchRecipes(query) {
   recipesContainer.innerHTML = "<p>Loading recipes...</p>";
   const allergies = getAllergies().join(",");
 
   try {
     const response = await fetch(
-      `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=6&addRecipeInformation=true&intolerances=${allergies}&apiKey=${API_KEY}`
+      `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=6&intolerances=${allergies}&apiKey=${API_KEY}`
     );
     const data = await response.json();
     displayRecipes(data.results);
@@ -82,7 +82,7 @@ async function fetchRecipes(query) {
   }
 }
 
-/* ================= DISPLAY RECIPES ================= */
+/* ================= DISPLAY LIST ================= */
 function displayRecipes(recipes) {
   recipesContainer.innerHTML = "";
 
@@ -97,13 +97,32 @@ function displayRecipes(recipes) {
     card.style.animationDelay = Math.random() * 0.2 + "s";
 
     card.innerHTML = `
-      <img src="${recipe.image}" alt="${recipe.title}">
+      <img src="https://spoonacular.com/recipeImages/${recipe.id}-556x370.jpg" alt="${recipe.title}">
       <h3>${recipe.title}</h3>
     `;
 
-    card.addEventListener("click", () => showRecipeModal(recipe));
+    card.addEventListener("click", () => loadFullRecipe(recipe.id));
     recipesContainer.appendChild(card);
   });
+}
+
+/* ================= FETCH FULL RECIPE ================= */
+async function loadFullRecipe(id) {
+  modalTitle.textContent = "Loading...";
+  modalIngredients.innerHTML = "";
+  modalInstructions.innerHTML = "";
+  recipeModal.style.display = "block";
+
+  try {
+    const response = await fetch(
+      `https://api.spoonacular.com/recipes/${id}/information?includeNutrition=false&apiKey=${API_KEY}`
+    );
+    const recipe = await response.json();
+    showRecipeModal(recipe);
+  } catch (error) {
+    modalInstructions.innerHTML = "<li>Error loading instructions.</li>";
+    console.error(error);
+  }
 }
 
 /* ================= MODAL ================= */
@@ -113,38 +132,35 @@ function showRecipeModal(recipe) {
   modalTitle.textContent = recipe.title;
   modalInfo.textContent = `Ready in ${recipe.readyInMinutes || "N/A"} mins · Servings: ${recipe.servings || "N/A"}`;
 
+  /* INGREDIENTS */
   modalIngredients.innerHTML = "";
+  recipe.extendedIngredients?.forEach(ing => {
+    const li = document.createElement("li");
+    li.textContent = ing.original;
+    modalIngredients.appendChild(li);
+  });
+
+  /* INSTRUCTIONS – GUARANTEED */
   modalInstructions.innerHTML = "";
 
-  /* INGREDIENTS */
-  if (recipe.extendedIngredients) {
-    recipe.extendedIngredients.forEach(ing => {
-      const li = document.createElement("li");
-      li.textContent = ing.original;
-      modalIngredients.appendChild(li);
-    });
-  }
-
-  /* INSTRUCTIONS (FIXED) */
-  if (recipe.analyzedInstructions && recipe.analyzedInstructions.length > 0) {
+  if (recipe.analyzedInstructions?.length > 0) {
     recipe.analyzedInstructions[0].steps.forEach(step => {
       const li = document.createElement("li");
       li.textContent = step.step;
       modalInstructions.appendChild(li);
     });
-  } else if (recipe.instructions) {
-    // Convert HTML instructions to readable text
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = recipe.instructions;
-
-    tempDiv.querySelectorAll("p").forEach(p => {
-      const li = document.createElement("li");
-      li.textContent = p.textContent;
-      modalInstructions.appendChild(li);
+  } 
+  else if (recipe.instructions) {
+    const clean = recipe.instructions.replace(/<\/?[^>]+(>|$)/g, "");
+    clean.split(". ").forEach(sentence => {
+      if (sentence.trim().length > 10) {
+        const li = document.createElement("li");
+        li.textContent = sentence.trim() + ".";
+        modalInstructions.appendChild(li);
+      }
     });
-  } else {
-    modalInstructions.innerHTML = "<li>No instructions available.</li>";
+  } 
+  else {
+    modalInstructions.innerHTML = "<li>No preparation steps provided.</li>";
   }
-
-  recipeModal.style.display = "block";
 }
