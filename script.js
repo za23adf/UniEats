@@ -50,6 +50,64 @@ allergyForm.addEventListener("submit", e => {
   allergyModal.style.display = "none";
 });
 
+/* ================= DEMO FALLBACK (REALISTIC GRID) ================= */
+const demoRecipes = [
+  {
+    id: 1,
+    title: "Creamy Chicken Pasta",
+    image: "https://images.unsplash.com/photo-1525755662778-989d0524087e",
+    readyInMinutes: 25,
+    servings: 2,
+    extendedIngredients: [{ original: "Pasta" }, { original: "Chicken" }],
+    instructions: "Boil pasta. Cook chicken. Mix with sauce."
+  },
+  {
+    id: 2,
+    title: "Quick Veggie Stir Fry",
+    image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b",
+    readyInMinutes: 15,
+    servings: 1,
+    extendedIngredients: [{ original: "Vegetables" }],
+    instructions: "Stir fry vegetables. Add sauce."
+  },
+  {
+    id: 3,
+    title: "Student Omelette",
+    image: "https://images.unsplash.com/photo-1551218808-94e220e084d2",
+    readyInMinutes: 10,
+    servings: 1,
+    extendedIngredients: [{ original: "Eggs" }],
+    instructions: "Beat eggs. Cook in pan."
+  },
+  {
+    id: 4,
+    title: "Simple Tomato Pasta",
+    image: "https://images.unsplash.com/photo-1521389508051-d7ffb5dc8c33",
+    readyInMinutes: 20,
+    servings: 2,
+    extendedIngredients: [{ original: "Tomato sauce" }],
+    instructions: "Cook pasta. Add sauce."
+  },
+  {
+    id: 5,
+    title: "Grilled Cheese Sandwich",
+    image: "https://images.unsplash.com/photo-1605475128023-2c7b67d1c5d1",
+    readyInMinutes: 8,
+    servings: 1,
+    extendedIngredients: [{ original: "Bread & cheese" }],
+    instructions: "Grill sandwich until golden."
+  },
+  {
+    id: 6,
+    title: "Easy Rice Bowl",
+    image: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe",
+    readyInMinutes: 12,
+    servings: 1,
+    extendedIngredients: [{ original: "Rice" }],
+    instructions: "Cook rice. Add toppings."
+  }
+];
+
 /* ================= LOAD ================= */
 window.addEventListener("load", () => {
   const allergies = getAllergies();
@@ -74,11 +132,16 @@ async function fetchRecipes(query) {
     const response = await fetch(
       `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=6&intolerances=${allergies}&apiKey=${API_KEY}`
     );
+
+    if (!response.ok) throw new Error("API limit");
+
     const data = await response.json();
+    localStorage.setItem("cachedRecipeList", JSON.stringify(data.results));
     displayRecipes(data.results);
-  } catch (err) {
-    recipesContainer.innerHTML = "<p>Error loading recipes.</p>";
-    console.error(err);
+
+  } catch {
+    const cached = JSON.parse(localStorage.getItem("cachedRecipeList"));
+    displayRecipes(cached && cached.length ? cached : demoRecipes);
   }
 }
 
@@ -86,43 +149,18 @@ async function fetchRecipes(query) {
 function displayRecipes(recipes) {
   recipesContainer.innerHTML = "";
 
-  if (!recipes || recipes.length === 0) {
-    recipesContainer.innerHTML = "<p>No recipes found.</p>";
-    return;
-  }
-
   recipes.forEach(recipe => {
     const card = document.createElement("div");
     card.className = "recipeCard";
-    card.style.animationDelay = Math.random() * 0.2 + "s";
 
     card.innerHTML = `
-      <img src="https://spoonacular.com/recipeImages/${recipe.id}-556x370.jpg" alt="${recipe.title}">
+      <img src="${recipe.image}" alt="${recipe.title}">
       <h3>${recipe.title}</h3>
     `;
 
-    card.addEventListener("click", () => loadFullRecipe(recipe.id));
+    card.addEventListener("click", () => showRecipeModal(recipe));
     recipesContainer.appendChild(card);
   });
-}
-
-/* ================= FETCH FULL RECIPE ================= */
-async function loadFullRecipe(id) {
-  modalTitle.textContent = "Loading...";
-  modalIngredients.innerHTML = "";
-  modalInstructions.innerHTML = "";
-  recipeModal.style.display = "block";
-
-  try {
-    const response = await fetch(
-      `https://api.spoonacular.com/recipes/${id}/information?includeNutrition=false&apiKey=${API_KEY}`
-    );
-    const recipe = await response.json();
-    showRecipeModal(recipe);
-  } catch (error) {
-    modalInstructions.innerHTML = "<li>Error loading instructions.</li>";
-    console.error(error);
-  }
 }
 
 /* ================= MODAL ================= */
@@ -130,37 +168,23 @@ modalCloseBtn.addEventListener("click", () => recipeModal.style.display = "none"
 
 function showRecipeModal(recipe) {
   modalTitle.textContent = recipe.title;
-  modalInfo.textContent = `Ready in ${recipe.readyInMinutes || "N/A"} mins · Servings: ${recipe.servings || "N/A"}`;
+  modalInfo.textContent = `Ready in ${recipe.readyInMinutes} mins · Servings: ${recipe.servings}`;
 
-  /* INGREDIENTS */
   modalIngredients.innerHTML = "";
-  recipe.extendedIngredients?.forEach(ing => {
+  recipe.extendedIngredients?.forEach(i => {
     const li = document.createElement("li");
-    li.textContent = ing.original;
+    li.textContent = i.original;
     modalIngredients.appendChild(li);
   });
 
-  /* INSTRUCTIONS – GUARANTEED */
   modalInstructions.innerHTML = "";
-
-  if (recipe.analyzedInstructions?.length > 0) {
-    recipe.analyzedInstructions[0].steps.forEach(step => {
+  recipe.instructions.split(". ").forEach(step => {
+    if (step.trim()) {
       const li = document.createElement("li");
-      li.textContent = step.step;
+      li.textContent = step;
       modalInstructions.appendChild(li);
-    });
-  } 
-  else if (recipe.instructions) {
-    const clean = recipe.instructions.replace(/<\/?[^>]+(>|$)/g, "");
-    clean.split(". ").forEach(sentence => {
-      if (sentence.trim().length > 10) {
-        const li = document.createElement("li");
-        li.textContent = sentence.trim() + ".";
-        modalInstructions.appendChild(li);
-      }
-    });
-  } 
-  else {
-    modalInstructions.innerHTML = "<li>No preparation steps provided.</li>";
-  }
+    }
+  });
+
+  recipeModal.style.display = "block";
 }
