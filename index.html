@@ -8,65 +8,49 @@
 </head>
 <body>
 
-<header role="banner">
-  <h1>UniEats</h1>
-  <p class="subtitle">
-    A simple, accessible recipe website designed for university students.
-  </p>
-  <p class="tagline">
-    Fast meals · Minimal design · Reduced cognitive load
-  </p>
+<header>
+  <h1 class="logo">UniEats 🍜</h1>
+  <p class="subtitle">Simple recipes for busy students</p>
+  <p class="tagline">Fast · Accessible · Stress-free cooking</p>
+
   <div class="user-bar">
     <span id="currentUser"></span>
-    <button id="allergyBtn">Allergy Settings</button>
+    <button id="allergyBtn">Allergies</button>
     <button id="logoutBtn">Logout</button>
   </div>
 </header>
 
-<main id="mainContent">
-  <label for="searchInput" class="visually-hidden">Search recipes</label>
-  <input
-    type="text"
-    id="searchInput"
-    placeholder="Search recipes (e.g. chicken, pasta)"
-    aria-label="Search recipes"
-  />
-  <button id="searchBtn">Search</button>
+<main>
+  <div class="search-box">
+    <input id="searchInput" type="text" placeholder="Search recipes..." />
+    <button id="searchBtn">🔍</button>
+  </div>
 
-  <section
-    class="recipes"
-    id="recipeContainer"
-    role="list"
-    aria-live="polite"
-  ></section>
+  <section class="recipes" id="recipeContainer"></section>
 </main>
 
-<!-- Recipe Modal -->
-<div
-  id="recipeModal"
-  class="modal"
-  role="dialog"
-  aria-modal="true"
-  aria-hidden="true"
-  aria-labelledby="modalTitle"
->
+<!-- RECIPE MODAL -->
+<div id="recipeModal" class="modal">
   <div class="modalContent">
-    <button class="closeBtn" aria-label="Close recipe details">&times;</button>
+    <button class="closeBtn">&times;</button>
     <h2 id="modalTitle"></h2>
-    <p id="modalInfo"></p>
-    <h3>Ingredients:</h3>
+    <p id="modalInfo" class="modalMeta"></p>
+
+    <h3>Ingredients</h3>
     <ul id="modalIngredients"></ul>
-    <h3>Instructions:</h3>
-    <ol id="modalInstructions"></ol>
+
+    <h3>Instructions</h3>
+    <ol id="modalInstructions" class="scroll-box"></ol>
   </div>
 </div>
 
-<!-- Allergy Modal -->
-<div id="allergyModal" class="modal" aria-hidden="true">
-  <div class="modalContent">
-    <button class="closeBtn" aria-label="Close">&times;</button>
+<!-- ALLERGY MODAL -->
+<div id="allergyModal" class="modal">
+  <div class="modalContent small">
+    <button class="closeBtn">&times;</button>
     <h2>Allergy Preferences</h2>
-    <form id="allergyForm">
+
+    <form id="allergyForm" class="checkbox-grid">
       <label><input type="checkbox" value="gluten"> Gluten</label>
       <label><input type="checkbox" value="dairy"> Dairy</label>
       <label><input type="checkbox" value="peanuts"> Peanuts</label>
@@ -74,7 +58,8 @@
       <label><input type="checkbox" value="shellfish"> Shellfish</label>
       <label><input type="checkbox" value="eggs"> Eggs</label>
       <label><input type="checkbox" value="soy"> Soy</label>
-      <button type="submit">Save Allergies</button>
+
+      <button type="submit" class="saveBtn">Save</button>
     </form>
   </div>
 </div>

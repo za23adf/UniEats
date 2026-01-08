@@ -1,86 +1,200 @@
-* { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
 
 body {
   margin: 0;
-  background-color: #f4f6f8;
-  color: #333;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  color: #fff;
+  min-height: 100vh;
 }
 
+/* HEADER */
 header {
-  background-color: #2c7be5;
-  color: white;
   text-align: center;
-  padding: 40px 15px;
+  padding: 50px 20px;
+  animation: fadeDown 1s ease;
 }
 
-header h1 { margin: 0; font-size: 2.6rem; }
-.subtitle { margin: 10px 0 5px; font-size: 1.1rem; }
-.tagline { font-size: 0.9rem; opacity: 0.9; }
+.logo {
+  font-size: 3rem;
+  letter-spacing: 1px;
+}
 
+.subtitle {
+  opacity: 0.9;
+}
+
+.tagline {
+  opacity: 0.7;
+  font-size: 0.9rem;
+}
+
+/* USER BAR */
 .user-bar {
-  margin-top: 15px;
+  margin-top: 20px;
 }
 
-.user-bar span { margin-right: 10px; font-weight: bold; }
 .user-bar button {
-  margin: 0 5px;
-  padding: 6px 12px;
+  background: #ff6f61;
   border: none;
-  border-radius: 6px;
+  padding: 10px 16px;
+  border-radius: 25px;
+  margin: 0 5px;
   cursor: pointer;
-  background-color: #ff6f61;
-  color: white;
   font-weight: bold;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
-.user-bar button:hover { background-color: #ff3b2f; }
 
+.user-bar button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+/* MAIN */
 main {
-  max-width: 960px;
-  margin: 35px auto;
-  padding: 0 20px;
+  max-width: 1100px;
+  margin: auto;
+  padding: 30px;
 }
 
-#searchInput { width: 70%; padding: 14px; font-size: 1rem; margin-bottom: 25px; border-radius: 8px; border: 2px solid #ccc; }
-#searchBtn { padding: 14px; font-size: 1rem; border-radius: 8px; border: none; background-color: #2c7be5; color: white; cursor: pointer; }
-#searchBtn:hover { background-color: #1b5fa7; }
+/* SEARCH */
+.search-box {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 40px;
+}
 
-.recipes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+.search-box input {
+  width: 70%;
+  padding: 16px;
+  border-radius: 30px;
+  border: none;
+  font-size: 1rem;
+}
+
+.search-box button {
+  border-radius: 50%;
+  border: none;
+  width: 55px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  background: #ff6f61;
+}
+
+/* RECIPES */
+.recipes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+}
 
 .recipeCard {
-  background: white;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
   padding: 20px;
-  border-radius: 12px;
+  text-align: center;
   cursor: pointer;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  animation: fadeUp 0.6s ease;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
-.recipeCard:hover { transform: translateY(-6px); box-shadow: 0 12px 25px rgba(0,0,0,0.15); }
-.recipeCard h3 { color: #2c7be5; }
 
+.recipeCard:hover {
+  transform: scale(1.05);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.recipeCard img {
+  width: 100%;
+  border-radius: 15px;
+}
+
+/* MODALS */
 .modal {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
-  overflow-y: auto;
-  padding: 50px 20px;
+  background: rgba(0,0,0,0.7);
+  animation: fadeIn 0.3s ease;
 }
-.modalContent {
-  background: white;
-  max-width: 600px;
-  margin: auto;
-  padding: 25px;
-  border-radius: 12px;
-  overflow-y: auto;
-  max-height: 90vh;
-}
-.closeBtn {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  float: right;
-}
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; }
 
-input[type="checkbox"] { margin-right: 8px; margin-bottom: 10px; }
+.modalContent {
+  background: #fff;
+  color: #333;
+  max-width: 700px;
+  margin: 60px auto;
+  padding: 30px;
+  border-radius: 20px;
+  animation: popUp 0.4s ease;
+  max-height: 85vh;
+  overflow: hidden;
+}
+
+.modalContent.small {
+  max-width: 400px;
+}
+
+.closeBtn {
+  float: right;
+  font-size: 26px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* SCROLLABLE INSTRUCTIONS */
+.scroll-box {
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.scroll-box::-webkit-scrollbar {
+  width: 6px;
+}
+.scroll-box::-webkit-scrollbar-thumb {
+  background: #2a5298;
+  border-radius: 10px;
+}
+
+/* CHECKBOX GRID */
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.saveBtn {
+  grid-column: span 2;
+  margin-top: 15px;
+  padding: 12px;
+  border: none;
+  background: #2a5298;
+  color: white;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popUp {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
