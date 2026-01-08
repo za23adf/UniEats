@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniEats</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <h1>UniEats</h1>
+  <p>Simple, affordable recipes for students</p>
+</header>
+
+<main>
+  <input type="text" id="searchInput" placeholder="Search recipes..." />
+  <section class="recipes" id="recipeList"></section>
+</main>
+
+<!-- Modal -->
+<div id="recipeModal" class="modal">
+  <div class="modalContent">
+    <span class="closeBtn">&times;</span>
+    <h2 id="modalTitle"></h2>
+    <p id="modalDescription"></p>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
