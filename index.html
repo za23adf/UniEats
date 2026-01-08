@@ -3,27 +3,79 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UniEats</title>
+  <title>UniEats – Simple Student Recipes</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<header>
+<header role="banner">
   <h1>UniEats</h1>
-  <p>Simple, affordable recipes for students</p>
+  <p class="subtitle">
+    A simple, accessible recipe website designed for university students.
+  </p>
+  <p class="tagline">
+    Fast meals · Minimal design · Reduced cognitive load
+  </p>
+  <div class="user-bar">
+    <span id="currentUser"></span>
+    <button id="allergyBtn">Allergy Settings</button>
+    <button id="logoutBtn">Logout</button>
+  </div>
 </header>
 
-<main>
-  <input type="text" id="searchInput" placeholder="Search recipes..." />
-  <section class="recipes" id="recipeList"></section>
+<main id="mainContent">
+  <label for="searchInput" class="visually-hidden">Search recipes</label>
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Search recipes (e.g. chicken, pasta)"
+    aria-label="Search recipes"
+  />
+  <button id="searchBtn">Search</button>
+
+  <section
+    class="recipes"
+    id="recipeContainer"
+    role="list"
+    aria-live="polite"
+  ></section>
 </main>
 
-<!-- Modal -->
-<div id="recipeModal" class="modal">
+<!-- Recipe Modal -->
+<div
+  id="recipeModal"
+  class="modal"
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+  aria-labelledby="modalTitle"
+>
   <div class="modalContent">
-    <span class="closeBtn">&times;</span>
+    <button class="closeBtn" aria-label="Close recipe details">&times;</button>
     <h2 id="modalTitle"></h2>
-    <p id="modalDescription"></p>
+    <p id="modalInfo"></p>
+    <h3>Ingredients:</h3>
+    <ul id="modalIngredients"></ul>
+    <h3>Instructions:</h3>
+    <ol id="modalInstructions"></ol>
+  </div>
+</div>
+
+<!-- Allergy Modal -->
+<div id="allergyModal" class="modal" aria-hidden="true">
+  <div class="modalContent">
+    <button class="closeBtn" aria-label="Close">&times;</button>
+    <h2>Allergy Preferences</h2>
+    <form id="allergyForm">
+      <label><input type="checkbox" value="gluten"> Gluten</label>
+      <label><input type="checkbox" value="dairy"> Dairy</label>
+      <label><input type="checkbox" value="peanuts"> Peanuts</label>
+      <label><input type="checkbox" value="tree nuts"> Tree Nuts</label>
+      <label><input type="checkbox" value="shellfish"> Shellfish</label>
+      <label><input type="checkbox" value="eggs"> Eggs</label>
+      <label><input type="checkbox" value="soy"> Soy</label>
+      <button type="submit">Save Allergies</button>
+    </form>
   </div>
 </div>
 
